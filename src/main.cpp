@@ -1,4 +1,4 @@
-// #include "Arduino.h"
+#include "Arduino.h"
 #include "heltec.h"
 // #include "images.h"
 #include "OneButton.h"
@@ -85,16 +85,19 @@ void longPress()
 {
  verifyPassword();
 } // click
+
+
  void setup() {
-  Heltec.begin(true /*DisplayEnable Enable*/, false /*LoRa Disable*/, true /*Serial Enable*/);
-  Heltec.display->clear();
-  Heltec.display->setFont(ArialMT_Plain_10);        //设置字体大小
-  Heltec.display->setTextAlignment(TEXT_ALIGN_LEFT);//设置字体对齐方式
-  Heltec.display->drawString(0, 0, "Start Updating....");
   Serial.begin(115200);
   while (!Serial);
-  Serial.println("Monitor connected");
+  pinMode(LED_BUILTIN, OUTPUT);
 
+  Heltec.begin(true /*DisplayEnable Enable*/, false /*LoRa Disable*/, true /*Serial Enable*/);
+  Heltec.display->setFont(ArialMT_Plain_10);        //设置字体大小
+  Heltec.display->setTextAlignment(TEXT_ALIGN_LEFT);//设置字体对齐方式
+  
+  
+  Serial.println("Monitor connected");
   Serial.println("Starting");
   // declare the ledPin as an OUTPUT:
   pinMode(ledPin, OUTPUT);
@@ -102,14 +105,24 @@ void longPress()
   button.attachDoubleClick(doubleClick);
   button.attachClick(click);
   button.attachLongPressStop(longPress);
+
+  
 }
 
 void loop() {
+  Heltec.display->clear();
+     digitalWrite(LED_BUILTIN, HIGH);  // turn the LED on (HIGH is the voltage level)
+  delay(1000);                      // wait for a second
+  digitalWrite(LED_BUILTIN, LOW);   // turn the LED off by making the voltage LOW
+  delay(1000); 
+  Serial.println("looping...");
+  Heltec.display->drawString(0, 26, "Hello world");
+  Heltec.display->display();
   // read the value from the sensor:
   // button.tick();
   // sensorValue = analogRead(A0);
   // Serial.println(sensorValue);
 
-  delay(10);
+  // delay(10);
   // triggerRelay();
 }
