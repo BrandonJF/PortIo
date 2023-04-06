@@ -1,26 +1,26 @@
 #include "Arduino.h"
 #include "heltec.h"
-// #include "images.h"
 #include "OneButton.h"
 
-enum clickType
-{
-  s,
-  d,
-};
+/** Hardware Related Vars*/
 int sensorPin = 36; // select the input pin for the potentiometer
 int relayPin = 10;
-
-// int ledPin = 13;     // select the pin for the LED
 int sensorValue = 0; // variable to store the value coming from the sensor
+int loopsPressed = 0;
+
+/** Password Related Vars*/
+enum clickType {s, d,};
+clickType lastEntered;
 int passwordLength = 4;
 int myPassword[4] = {s, d, d, s};
-bool relayEnabled = true;
-bool needsRelayReset = false;
-clickType lastEntered;
 int currentIndex;
 bool lastEnteredCorrect = false;
 
+/** Relay Related Vars*/
+bool relayEnabled = true;
+bool needsRelayReset = false;
+
+/** Display Related Vars*/
 String currPassInfo = "Pass";
 String currIndexInfo = "Info";
 String currVerificationInfo = "Verification";
@@ -29,6 +29,7 @@ String currVerificationInfo = "Verification";
 // threshold is 400 for the actual door / 320 for external dc power at 5v
 // 1800 for the heltex
 // OneButton button(sensorPin, true, false, true, 1900);
+OneButton button(sensorPin, true);
 
 void triggerRelay()
 {
@@ -96,12 +97,14 @@ void verifyPassword()
 
 void click()
 {
+  Serial.println("CLICKED");
   lastEntered = s;
   verifyLastEntered();
 } // click
 
 void longPress()
 {
+  Serial.println("LONG PRESSED");
   verifyPassword();
 } // click
 
@@ -111,6 +114,7 @@ void setup()
   while (!Serial);
   pinMode(LED_BUILTIN, OUTPUT);
   // pinMode(sensorPin, INPUT_PULLUP);  
+  pinMode(sensorPin, INPUT_PULLUP);
 
   Heltec.begin(true /*DisplayEnable Enable*/, false /*LoRa Disable*/, true /*Serial Enable*/);
   Heltec.display->setFont(ArialMT_Plain_10); 
@@ -121,33 +125,43 @@ void setup()
   // declare the ledPin as an OUTPUT:
   // pinMode(ledPin, OUTPUT);
   pinMode(relayPin, OUTPUT);
-  // button.attachDoubleClick(doubleClick);
-  // button.attachClick(click);
-  // button.attachLongPressStop(longPress);
+  button.attachDoubleClick(doubleClick);
+  button.attachClick(click);
+  button.attachLongPressStop(longPress);
 }
 
 void loop()
 {
   Heltec.display->clear();
-  digitalWrite(LED_BUILTIN, LOW);  // turn the LED off by making the voltage LOW
-  // Serial.println("looping...");
+  /*
+  int sensorState = digitalRead(sensorPin);
+  int buttonPressed = sensorState == LOW;
+  int prevLoopsPressed = loopsPressed;
+  if (buttonPressed){
+    loopsPressed++;
+    // Serial.print("Button Pressed Cnt: ");
+    // Serial.println(loopsPressed);
+  }
+  Serial.println(sensorState);
+  */
+  
   
   // read the value from the sensor:
-  // button.tick();
-  sensorValue = analogRead(sensorPin);
+
+  button.tick();
+
+  // sensorValue = analogRead(sensorPin);
   // int digval = digitalRead(sensorPin);  
-  String sensValStr = String(sensorValue);
+  // String sensValStr = String(sensorValue);
   // String sensValStr = String(digval);
-  Heltec.display->drawString(0,0, sensValStr);
   // Heltec.display->drawString(0,0, sensValStr);
+  
+  // Heltec.display->drawString(0,0, String(loopsPressed));
+  Heltec.display->drawString(0,0, button.getState());
   Heltec.display->drawString(0,10, currPassInfo);
  Heltec.display->drawString(0,20,currIndexInfo);
  Heltec.display->drawString(0,30, currVerificationInfo);
   Heltec.display->display();
   // Serial.println(digval);
-Serial.println(sensorValue);
-
-
-  delay(10);
-  // triggerRelay();
+// Serial.println(sensorValue);
 }

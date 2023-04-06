@@ -46,7 +46,7 @@ public:
    * @param activeLow Set to true when the input level is LOW when the button is pressed, Default is true.
    * @param pullupActive Activate the internal pullup when available. Default is true.
    */
-  OneButton(const int pin, const boolean activeLow = false, const bool pullupActive = true, const bool isAnalog = true, const int highThreshold = 400);
+  OneButton(const int pin, const boolean activeLow = true, const bool pullupActive = true);
 
   // ----- Set runtime parameters -----
 
@@ -110,6 +110,11 @@ public:
   // ----- State machine functions -----
 
   /**
+   * @brief Returns the current state of the FSM as a string.
+   */
+  String getState(void);
+
+  /**
    * @brief Call this function every some milliseconds for checking the input
    * level at the initialized digital pin.
    */
@@ -150,11 +155,11 @@ public:
 
 private:
   int _pin;                         // hardware pin number.
-  unsigned int _debounceTicks = 50; // number of ticks for debounce times.
-  unsigned int _clickTicks = 400;   // number of msecs before a click is detected.
-  unsigned int _pressTicks = 800;   // number of msecs before a long button press is detected
-  bool _isAnalog;
-  int _highThreshold;
+  unsigned int _debounceTicks = 50; // number of ticks for debounce times. Def 50
+  unsigned int _minBreakSinceLastFire = 100; // number of ticks for debounce times. Def 50
+  boolean _lastActiveLevel = false; // number of ticks for debounce times. Def 50
+  unsigned int _clickTicks = 400;   // number of msecs before a click is detected. Def 400
+  unsigned int _pressTicks = 800;   // number of msecs before a long button press is detected. Def 800
 
   int _buttonPressed;
 
@@ -198,6 +203,20 @@ private:
     UNKNOWN = 99
   };
 
+  const char* enumToString(stateMachine_t value) {
+    switch (value) {
+        case OCS_INIT: return "OCS_INIT";
+        case OCS_DOWN: return "OCS_DOWN";
+        case OCS_UP: return "OCS_UP";
+        case OCS_COUNT: return "OCS_COUNT";
+        case OCS_PRESS: return "OCS_PRESS";
+        case OCS_PRESSEND: return "OCS_PRESSEND";
+        case UNKNOWN: return "UNKNOWN";
+        default: return "INVALID";
+    }
+}
+
+
   /**
    *  Advance to a new state and save the last one to come back in cas of bouncing detection.
    */
@@ -207,6 +226,7 @@ private:
   stateMachine_t _lastState = OCS_INIT; // used for debouncing
 
   unsigned long _startTime; // start of current input change to checking debouncing
+  unsigned long _lastEventTime; // tracks the last time any sort of input was recorded
   int _nClicks;             // count the number of clicks with this variable
   int _maxClicks = 1;       // max number (1, 2, multi=3) of clicks of interest by registration of event functions.
 };
