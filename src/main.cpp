@@ -1,6 +1,7 @@
 #include "Arduino.h"
 #include "heltec.h"
 #include "OneButton.h"
+#include "CircularQueue.h"
 
 /** Hardware Related Vars*/
 int sensorPin = 36; // select the input pin for the potentiometer
@@ -13,6 +14,7 @@ enum clickType {s, d,};
 clickType lastEntered;
 int passwordLength = 4;
 int myPassword[4] = {s, d, d, s};
+CircularQueue<int> pwQueue(4);
 int currentIndex;
 bool lastEnteredCorrect = false;
 
@@ -30,6 +32,7 @@ String currVerificationInfo = "Verification";
 // 1800 for the heltex
 // OneButton button(sensorPin, true, false, true, 1900);
 OneButton button(sensorPin, true);
+CircularQueue<int> queue(5);
 
 void triggerRelay()
 {
@@ -72,6 +75,7 @@ void verifyLastEntered()
 
 void doubleClick()
 {
+  Serial.println("DOUBLE CLICKED");
   lastEntered = d;
   verifyLastEntered();
 } // doubleClick
