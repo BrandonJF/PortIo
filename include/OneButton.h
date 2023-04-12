@@ -155,9 +155,17 @@ public:
 
 private:
   int _pin;                         // hardware pin number.
+  boolean debug = false;
+
   unsigned int _debounceTicks = 50; // number of ticks for debounce times. Def 50
-  unsigned int _minBreakSinceLastFire = 100; // number of ticks for debounce times. Def 50
-  boolean _lastActiveLevel = false; // number of ticks for debounce times. Def 50
+  unsigned int _minBreakSinceLastFire = 500; // amount of time needed before closing the sample and moving to counting
+  unsigned int _maxSwitchingFrequency = 50; // basically the debounce rate for a signal to be considered a contiguous press
+  unsigned int _maxDblClickTime = 400; // max time since last event (but post maxFreq) will count as dbl (most dblclicks in the 100 - 400 range)
+  
+
+  boolean _lastKnownButtonActivation = false; // 
+  boolean _eventFlagDirty = false; // 
+  unsigned long _timeSinceLastEventFire = millis(); // set high to handle initial case
   unsigned int _clickTicks = 400;   // number of msecs before a click is detected. Def 400
   unsigned int _pressTicks = 800;   // number of msecs before a long button press is detected. Def 800
 
@@ -196,10 +204,11 @@ private:
   enum stateMachine_t : int {
     OCS_INIT = 0,
     OCS_DOWN = 1,
-    OCS_UP = 2,
-    OCS_COUNT = 3,
-    OCS_PRESS = 6,
-    OCS_PRESSEND = 7,
+    OCS_BUFFER_PERIOD = 2,
+    OCS_UP = 3,
+    OCS_COUNT = 4,
+    OCS_PRESS = 5,
+    OCS_PRESSEND = 6,
     UNKNOWN = 99
   };
 
@@ -211,6 +220,7 @@ private:
         case OCS_COUNT: return "OCS_COUNT";
         case OCS_PRESS: return "OCS_PRESS";
         case OCS_PRESSEND: return "OCS_PRESSEND";
+        case OCS_BUFFER_PERIOD: return "OCS_BUFFER_PERIOD";
         case UNKNOWN: return "UNKNOWN";
         default: return "INVALID";
     }
@@ -228,7 +238,7 @@ private:
   unsigned long _startTime; // start of current input change to checking debouncing
   unsigned long _lastEventTime; // tracks the last time any sort of input was recorded
   int _nClicks;             // count the number of clicks with this variable
-  int _maxClicks = 1;       // max number (1, 2, multi=3) of clicks of interest by registration of event functions.
+  int _maxClicks = 3;       // max number (1, 2, multi=3) of clicks of interest by registration of event functions.
 };
 
 #endif

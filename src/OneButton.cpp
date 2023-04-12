@@ -199,7 +199,11 @@ int OneButton::getNumberClicks(void)
 void OneButton::tick(void)
 {
   if (_pin >= 0) {
-    tick(digitalRead(_pin) == _buttonPressed);
+    int pinState = digitalRead(_pin);
+    if (debug){
+      Serial.println(pinState);
+    }
+    tick(pinState == _buttonPressed);
   }
 }
 
@@ -226,19 +230,30 @@ void OneButton::_newState(stateMachine_t nextState)
 /**
  * @brief Run the finite state machine (FSM) using the given level.
  */
-void OneButton::tick(bool activeLevel)
+void OneButton::tick(bool buttonActivated)
 {
   unsigned long now = millis(); // current (relative) time in msecs.
   unsigned long waitTime = (now - _startTime);
   unsigned long currentTime = millis();
   unsigned long timeSinceStart = currentTime - _startTime;
   unsigned long timeMarkedReadyForStateChange = 0;
+  
+  _timeSinceLastEventFire = currentTime - _lastEventTime;
+  //compare against the last event that fired and if they are different record an event as having fired
+  if (buttonActivated != _lastKnownButtonActivation ) { //something switched
+  Serial.println("Event Fired. Time since last event fire: " + String(_timeSinceLastEventFire));
+    _lastEventTime = currentTime;
+    _timeSinceLastEventFire = currentTime - _lastEventTime;
+    _eventFlagDirty = true; // for this tick the flag will be dirty so that we can debounce 
+  }
+  
+  // set the lastKnownbuttonActivated to this level (doing so at the end of the loop now)
 
   // Implementation of the state machine
   switch (_state) {
   case OneButton::OCS_INIT:
     // waiting for level to become active.
-    if (activeLevel) {
+    if (buttonActivated) {
       _newState(OneButton::OCS_DOWN);
       _startTime = now; // remember starting time
       _nClicks = 0;
@@ -247,33 +262,55 @@ void OneButton::tick(bool activeLevel)
 
   case OneButton::OCS_DOWN:
     // waiting for level to become inactive.
-    if (!activeLevel){
-      _lastEventTime = currentTime;
+    if ((_eventFlagDirty|| !buttonActivated) && (_timeSinceLastEventFire <= _maxSwitchingFrequency)){ // there's been a change but its within our debounce window so ignore
+      Serial.println("[OCS_DOWN] Ignoring event faster than _maxSwitchingFrequency ");
+    } else if (_timeSinceLastEventFire > _maxSwitchingFrequency && _timeSinceLastEventFire < _maxDblClickTime){
+      // button is depressed 
+      // time since last event greater than max switching - not accidental or signal
+      // less than max dblClick threshold
+      Serial.println("[OCS_DOWN] Frequency Cooldown over. Changing state to BUFFER.");
+        _startTime = now; // record this as the last desired start time
+        _newState(OneButton::OCS_BUFFER_PERIOD);
     }
-    if ((!activeLevel) && timeSinceStart <= 50 ){ // there's been a change but its within our debounce window so ignore
-      Serial.println("Ignoring events within DOWN debounce window.");
-    } else if (!activeLevel && timeSinceStart > 50){ //there's been a change and we're beyond the debounce window
-        Serial.println("Debounce window exited. Changing state to UP");
+    
+    if (!_eventFlagDirty && !buttonActivated && _timeSinceLastEventFire > _maxSwitchingFrequency){ //there's been a change and we're beyond the debounce window
+        Serial.println("Down Debounce window exited. Queuing state change to UP");
+        if (( _minBreakSinceLastFire < _timeSinceLastEventFire) && (_timeSinceLastEventFire > _maxSwitchingFrequency )){
+          Serial.println("Cooldown over. Changing state to UP.");
         _startTime = now; // record this as the last desired start time
         _newState(OneButton::OCS_UP);
+        } else if (currentTime % 2000 == 0) {
+          Serial.println("Queud for change to UP but waiting on event cooldown.");
+        }
     }
     
 
-    // if ((!activeLevel) && (waitTime < _debounceTicks)) {
-    //   // button was released to quickly so I assume some bouncing.
-    //   Serial.println("button down was released too quickly so I assume some bouncing. Waited:");
-    //   Serial.println(waitTime);
-    //   _newState(_lastState);
-
-    // } else if (!activeLevel) {
-    //   _newState(OneButton::OCS_UP);
-    //   _startTime = now; // remember starting time
-
-    // } else if ((activeLevel) && (waitTime > _pressTicks)) {
+//else if ((buttonActivated) && (waitTime > _pressTicks)) {
     //   if (_longPressStartFunc) _longPressStartFunc();
     //   if (_paramLongPressStartFunc) _paramLongPressStartFunc(_longPressStartFuncParam);
     //   _newState(OneButton::OCS_PRESS);
-    // } // if
+    // } // if statement
+    break;
+
+    case OneButton::OCS_BUFFER_PERIOD:
+    /* expectation is that the level is inactive during this period 
+     but if it is reactivated for a double click then we'll increment the nclicks and head back to down*/
+
+    // the buffer window
+    if (timeSinceStart < _maxDblClickTime){
+      //Serial.println("In the dblckick buffer zone");
+      if (buttonActivated){
+        Serial.println("[OCS_BUFFER_PERIOD] Received another click while in the buffer zone. Transitioning to DOWN.");
+         _newState(OneButton::OCS_DOWN);
+        _startTime = now; // remember starting time
+        _nClicks++;
+      }
+    } else {
+      Serial.println("[OCS_BUFFER_PERIOD] Didn't receive any more clicks in the buffer zone. Transitioning to UP.");
+       _newState(OneButton::OCS_UP);
+        _startTime = now; // remember starting time
+    }
+      
     break;
 
   case OneButton::OCS_UP:
@@ -283,24 +320,18 @@ void OneButton::tick(bool activeLevel)
         Serial.println("Debounce window exited. Changing state to COUNT");
         _nClicks++;
         _newState(OneButton::OCS_COUNT);
-    } else if ((activeLevel) && timeSinceStart <= 50 ){ // there's been a change but its within our debounce window so ignore
+    } else if ((buttonActivated) && timeSinceStart <= 50 ){ // there's been a change but its within our debounce window so ignore
       _lastEventTime = currentTime;
       Serial.println("Ignoring events within UP debounce window. Can't reclick this fast. Waited: " + String(timeSinceStart));
     } 
 
-    // if ((activeLevel) && (waitTime < _debounceTicks)) {
-    //   // button was pressed to quickly so I assume some bouncing.
-    //    Serial.println("button down was pressed again too quickly so I assume some bouncing. Waited:");
-    //   Serial.println(waitTime);
-    //   _newState(_lastState); // go back
-
-    // } else if (waitTime >= _debounceTicks) {
-    //   Serial.println("Counting as short button down, wait time:");
-    //   Serial.println(waitTime);
-    //   // count as a short button down
-    //   _nClicks++;
-    //   _newState(OneButton::OCS_COUNT);
-    // } // if
+    else if (waitTime >= _debounceTicks) {
+      Serial.println("Counting as short button down, wait time:");
+      Serial.println(waitTime);
+      // count as a short button down
+      _nClicks++;
+      _newState(OneButton::OCS_COUNT);
+    } // if
     break;
 
   case OneButton::OCS_COUNT:
@@ -323,10 +354,11 @@ void OneButton::tick(bool activeLevel)
         if (_multiClickFunc) _multiClickFunc();
         if (_paramMultiClickFunc) _paramMultiClickFunc(_multiClickFuncParam);
       } 
+      Serial.println("Num clicks counted: " + String(_nClicks));
 
 
 
-    // if (activeLevel) {
+    // if (buttonActivated) {
     //   // button is down again
     //   _newState(OneButton::OCS_DOWN);
     //   _startTime = now; // remember starting time
@@ -357,7 +389,7 @@ void OneButton::tick(bool activeLevel)
   case OneButton::OCS_PRESS:
     // waiting for menu pin being release after long press.
 
-    if (!activeLevel) {
+    if (!buttonActivated) {
       _newState(OneButton::OCS_PRESSEND);
       _startTime = now;
 
@@ -371,7 +403,7 @@ void OneButton::tick(bool activeLevel)
   case OneButton::OCS_PRESSEND:
     // button was released.
 
-    if ((activeLevel) && (waitTime < _debounceTicks)) {
+    if ((buttonActivated) && (waitTime < _debounceTicks)) {
       // button was released to quickly so I assume some bouncing.
       _newState(_lastState); // go back
 
@@ -388,7 +420,8 @@ void OneButton::tick(bool activeLevel)
     _newState(OneButton::OCS_INIT);
     break;
   } // if
-  _lastActiveLevel = activeLevel; //checking the active level at the end of the loop to compare on the next loop;
+  _lastKnownButtonActivation = buttonActivated; //checking the active level at the end of the loop to compare on the next loop;
+  _eventFlagDirty = false; // everything handled this tick
 } // OneButton.tick()
 
 
