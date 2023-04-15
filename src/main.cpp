@@ -2,25 +2,24 @@
 #include "heltec.h"
 #include "OneButton.h"
 #include "CircularQueue.h"
+#include <WiFi.h>
+#include "NetworkManager.h"
+#include "RingManager.h"
+
 
 /** Hardware Related Vars*/
 int sensorPin = 36; // select the input pin for the potentiometer
-int relayPin = 10;
+int relayPin = 21;
 int sensorValue = 0; // variable to store the value coming from the sensor
 int loopsPressed = 0;
 
 /** Password Related Vars*/
-enum clickType
-{
-  s,
-  d,
-};
-clickType lastEntered;
-int passwordLength = 4;
-std::vector<clickType> pwVect = {s, d, s, d};
 
-CircularQueue<clickType> pwQueue(4);
-int currentIndex;
+RingManager ringMan({s, d, s, s, d});
+clickType lastEntered;
+std::vector<clickType> pwVect = {s, d, s, s, d};
+
+CircularQueue<clickType> pwQueue(5);
 bool lastEnteredCorrect = false;
 
 /** Relay Related Vars*/
@@ -32,6 +31,9 @@ String currPassInfo = "Pass";
 String currIndexInfo = "Info";
 String currVerificationInfo = "Verification";
 OneButton button(sensorPin, true);
+
+/** Networking */
+NetworkManager network("DoubleUpOnTheButt-Slowly", "whatwhatinthebutt");
 
 void triggerRelay()
 {
@@ -63,7 +65,7 @@ void verifyLastEntered()
   if (pwQueue == pwVect)
   {
     Serial.println("Password Accepted!");
-    // triggerRelay(); -- commented until we can get the relays working at 3v
+    triggerRelay(); //-- commented until we can get the relays working at 3v
   }
 }
 
