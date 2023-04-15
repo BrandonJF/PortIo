@@ -160,7 +160,7 @@ private:
   unsigned int _debounceTicks = 50; // number of ticks for debounce times. Def 50
   unsigned int _minBreakSinceLastFire = 500; // amount of time needed before closing the sample and moving to counting
   unsigned int _maxSwitchingFrequency = 50; // basically the debounce rate for a signal to be considered a contiguous press
-  unsigned int _maxDblClickTime = 400; // max time since last event (but post maxFreq) will count as dbl (most dblclicks in the 100 - 400 range)
+  unsigned int _maxDblClickTime = 300; // (400) max time since last event (but post maxFreq) will count as dbl (most dblclicks in the 100 - 400 range)
   
 
   boolean _lastKnownButtonActivation = false; // 
