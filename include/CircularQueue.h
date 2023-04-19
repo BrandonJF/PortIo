@@ -1,3 +1,6 @@
+#ifndef CIRCULARQUEUE_H
+#define CIRCULARQUEUE_H
+
 #include <vector>
 
 template<typename T>
@@ -91,3 +94,4 @@ private:
     size_t m_tail;
     size_t m_count;
 };
+#endif

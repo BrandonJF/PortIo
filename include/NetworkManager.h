@@ -1,7 +1,7 @@
 #ifndef NETWORKMANAGER_H
 #define NETWORKMANAGER_H
 
-#include <string>
+#include "Arduino.h"
 
 class NetworkManager {
 public:
@@ -9,18 +9,20 @@ public:
     NetworkManager();
 
     // Parameterized constructor
-    NetworkManager(std::string ssid, std::string pw);
+    NetworkManager(String ssid, String pw);
 
     // Getters and setters
-    std::string getSsid() const;
-    void setSsid(std::string ssid);
+    String getSsid() const;
+    void setSsid(String ssid);
 
-    std::string getPw() const;
-    void setPw(std::string pw);
+    String getPw() const;
+    void setPw(String pw);
+
+void connect();
 
 private:
-    std::string m_ssid;
-    std::string m_pw;
+    String m_ssid;
+    String m_pw;
 };
 
 #endif // NETWORKMANAGER_H

@@ -4,8 +4,7 @@
 #include "CircularQueue.h"
 #include <WiFi.h>
 #include "NetworkManager.h"
-#include "RingManager.h"
-
+#include "PasswordManager.h"
 
 /** Hardware Related Vars*/
 int sensorPin = 36; // select the input pin for the potentiometer
@@ -15,12 +14,7 @@ int loopsPressed = 0;
 
 /** Password Related Vars*/
 
-RingManager ringMan({s, d, s, s, d});
-clickType lastEntered;
-std::vector<clickType> pwVect = {s, d, s, s, d};
-
-CircularQueue<clickType> pwQueue(5);
-bool lastEnteredCorrect = false;
+PasswordManager passMan({s, d, s, s, d});
 
 /** Relay Related Vars*/
 bool relayEnabled = true;
@@ -33,10 +27,11 @@ String currVerificationInfo = "Verification";
 OneButton button(sensorPin, true);
 
 /** Networking */
-NetworkManager network("DoubleUpOnTheButt-Slowly", "whatwhatinthebutt");
+NetworkManager network("-", "");
 
 void triggerRelay()
 {
+  Serial.println("Triggering relay");
   digitalWrite(relayPin, HIGH);
   delay(3000);
   digitalWrite(relayPin, LOW);
@@ -56,32 +51,27 @@ void outputVerificationInfo(String s)
   currVerificationInfo = s;
 }
 
-void verifyLastEntered()
+void handleClick(ClickType click)
 {
-  Serial.println(lastEntered);
-
-  pwQueue.enqueue(lastEntered);
-
-  if (pwQueue == pwVect)
+  PasswordStatus status = passMan.registerClick(click);
+  Serial.println("Click handled: " + click);
+  if (status == ACCEPTED)
   {
-    Serial.println("Password Accepted!");
-    triggerRelay(); //-- commented until we can get the relays working at 3v
+    triggerRelay();
   }
 }
 
+
 void doubleClick()
 {
-  Serial.println("DOUBLE CLICKED");
-  lastEntered = d;
-  verifyLastEntered();
+  handleClick(d);
 } // doubleClick
 
 void click()
 {
-  Serial.println("CLICKED");
-  lastEntered = s;
-  verifyLastEntered();
+  handleClick(s);
 } // click
+
 
 void setup()
 {
@@ -91,7 +81,10 @@ void setup()
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(sensorPin, INPUT_PULLUP);
 
+  
+
   Heltec.begin(true /*DisplayEnable Enable*/, false /*LoRa Disable*/, true /*Serial Enable*/);
+  network.connect();
   Heltec.display->setFont(ArialMT_Plain_10);
   Heltec.display->setTextAlignment(TEXT_ALIGN_LEFT);
 
@@ -100,7 +93,11 @@ void setup()
   pinMode(relayPin, OUTPUT);
   button.attachDoubleClick(doubleClick);
   button.attachClick(click);
-  // button.attachLongPressStop(longPress);
+   passMan.registerClick(s);
+  passMan.registerClick(d);
+  passMan.registerClick(s);
+  passMan.registerClick(s);
+  passMan.registerClick(d);
 }
 
 void loop()
@@ -119,4 +116,5 @@ void loop()
   Heltec.display->drawString(0, 20, currIndexInfo);
   Heltec.display->drawString(0, 30, currVerificationInfo);
   Heltec.display->display();
+
 }
