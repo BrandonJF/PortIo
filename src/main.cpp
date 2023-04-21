@@ -27,9 +27,6 @@ String currIndexInfo = "Info";
 String currVerificationInfo = "Verification";
 OneButton button(sensorPin, true);
 
-/** Networking */
-NetworkManager network(WIFI_SSID, WIFI_PW);
-
 void triggerRelay()
 {
   Serial.println("Triggering relay");
@@ -37,6 +34,11 @@ void triggerRelay()
   delay(3000);
   digitalWrite(relayPin, LOW);
 }
+
+auto lockCallback = []() { triggerRelay(); };
+
+/** Networking */
+NetworkManager network(WIFI_SSID, WIFI_PW, lockCallback);
 
 void outputPassInfo(String s)
 {
@@ -62,7 +64,6 @@ void handleClick(ClickType click)
   }
 }
 
-
 void doubleClick()
 {
   handleClick(d);
@@ -73,7 +74,6 @@ void click()
   handleClick(s);
 } // click
 
-
 void setup()
 {
   Serial.begin(115200);
@@ -81,8 +81,6 @@ void setup()
     ;
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(sensorPin, INPUT_PULLUP);
-
-  
 
   Heltec.begin(true /*DisplayEnable Enable*/, false /*LoRa Disable*/, true /*Serial Enable*/);
   network.setup_wifi();
@@ -94,7 +92,7 @@ void setup()
   pinMode(relayPin, OUTPUT);
   button.attachDoubleClick(doubleClick);
   button.attachClick(click);
-   passMan.registerClick(s);
+  passMan.registerClick(s);
   passMan.registerClick(d);
   passMan.registerClick(s);
   passMan.registerClick(s);
@@ -117,5 +115,4 @@ void loop()
   Heltec.display->drawString(0, 20, currIndexInfo);
   Heltec.display->drawString(0, 30, currVerificationInfo);
   Heltec.display->display();
-
 }

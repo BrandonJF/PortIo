@@ -15,9 +15,9 @@ WiFiClient wclient;
 
 PubSubClient client(wclient); // Setup MQTT client
 
-NetworkManager::NetworkManager() : m_ssid(""), m_pw(0) {}
+NetworkManager::NetworkManager() : m_ssid(""), m_pw(0), m_callback(NULL) {}
 
-NetworkManager::NetworkManager(String ssid, String pw) : m_ssid(ssid), m_pw(pw) {}
+NetworkManager::NetworkManager(String ssid, String pw, LockCallback callback) : m_ssid(ssid), m_pw(pw), m_callback(callback){}
 
 String NetworkManager::getSsid() const
 {
@@ -61,14 +61,15 @@ void NetworkManager::setup_wifi()
     Serial.println("IP address: ");
     Serial.println(WiFi.localIP());
     client.setServer(broker, 1883);
-    client.setCallback(callback);
+    //https://hobbytronics.com.pk/arduino-custom-library-and-pubsubclient-call-back/
+    client.setCallback([this] (char* topic, byte* payload, unsigned int length) { this->lockCallback(topic, payload, length); });
 
 }
 
-void callback(char* topic, byte* payload, unsigned int length) {
+void NetworkManager::lockCallback(char* topic, byte* payload, unsigned int length) {
     Serial.print("Message received: ");
     Serial.println((char*) payload);
-
+    m_callback();
 }
 
 // Reconnect to client

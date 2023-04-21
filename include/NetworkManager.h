@@ -2,6 +2,14 @@
 
 #include "Arduino.h"
 
+enum LOCK_ACTION {
+    LOCK, 
+    UNLOCK
+};
+
+typedef std::function<void()> LockCallback;
+
+
 class NetworkManager
 {
 public:
@@ -9,7 +17,7 @@ public:
     NetworkManager();
 
     // Parameterized constructor
-    NetworkManager(String ssid, String pw);
+    NetworkManager(String ssid, String pw, LockCallback callback);
 
     // Getters and setters
     String getSsid() const;
@@ -20,6 +28,8 @@ public:
 
     void setup_wifi();
 
+    void lockCallback(char *topic, byte *payload, unsigned int length);
+
     void publish();
 
     void checkConnected();
@@ -29,8 +39,8 @@ public:
 private:
     String m_ssid;
     String m_pw;
+    LockCallback m_callback;
     const char *ID = "PortIO";       // Name of our device, must be unique
     const char *TOPIC = "door/buzz"; // Topic to subcribe to
     const char *APT_DOOR_TOPIC = "building/door/set";
 };
-    void callback(char *topic, byte *payload, unsigned int length);
