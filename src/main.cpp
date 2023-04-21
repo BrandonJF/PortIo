@@ -5,6 +5,7 @@
 #include <WiFi.h>
 #include "NetworkManager.h"
 #include "PasswordManager.h"
+#include "Config.h"
 
 /** Hardware Related Vars*/
 int sensorPin = 36; // select the input pin for the potentiometer
@@ -27,7 +28,7 @@ String currVerificationInfo = "Verification";
 OneButton button(sensorPin, true);
 
 /** Networking */
-NetworkManager network("-", "");
+NetworkManager network(WIFI_SSID, WIFI_PW);
 
 void triggerRelay()
 {
@@ -84,7 +85,7 @@ void setup()
   
 
   Heltec.begin(true /*DisplayEnable Enable*/, false /*LoRa Disable*/, true /*Serial Enable*/);
-  network.connect();
+  network.setup_wifi();
   Heltec.display->setFont(ArialMT_Plain_10);
   Heltec.display->setTextAlignment(TEXT_ALIGN_LEFT);
 
@@ -104,7 +105,7 @@ void loop()
 {
   Heltec.display->clear();
   button.tick();
-
+  network.checkConnected();
   // sensorValue = analogRead(sensorPin);
   // int digval = digitalRead(sensorPin);
   // String sensValStr = String(sensorValue);

@@ -1,9 +1,9 @@
-#ifndef NETWORKMANAGER_H
-#define NETWORKMANAGER_H
+#pragma once
 
 #include "Arduino.h"
 
-class NetworkManager {
+class NetworkManager
+{
 public:
     // Default constructor
     NetworkManager();
@@ -18,11 +18,19 @@ public:
     String getPw() const;
     void setPw(String pw);
 
-void connect();
+    void setup_wifi();
+
+    void publish();
+
+    void checkConnected();
+
+    void reconnect();
 
 private:
     String m_ssid;
     String m_pw;
+    const char *ID = "PortIO";       // Name of our device, must be unique
+    const char *TOPIC = "door/buzz"; // Topic to subcribe to
+    const char *APT_DOOR_TOPIC = "building/door/set";
 };
-
-#endif // NETWORKMANAGER_H
+    void callback(char *topic, byte *payload, unsigned int length);
