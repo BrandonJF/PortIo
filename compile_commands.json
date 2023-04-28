@@ -1,0 +1,82 @@
+[
+    {
+        "command": "/usr/bin/g++ -o .pio/build/native/lib8bd/ArduinoFake/ArduinoFake.o -c -std=c++11 -Wno-c++11-extensions -DPLATFORMIO=60106 -I.pio/libdeps/native/ArduinoFake/src .pio/libdeps/native/ArduinoFake/src/ArduinoFake.cpp",
+        "directory": "/Users/brandonjf/dev/arduino/PlatformIo/PortIo",
+        "file": "/Users/brandonjf/dev/arduino/PlatformIo/PortIo/.pio/libdeps/native/ArduinoFake/src/ArduinoFake.cpp"
+    },
+    {
+        "command": "/usr/bin/g++ -o .pio/build/native/lib8bd/ArduinoFake/ClientFake.o -c -std=c++11 -Wno-c++11-extensions -DPLATFORMIO=60106 -I.pio/libdeps/native/ArduinoFake/src .pio/libdeps/native/ArduinoFake/src/ClientFake.cpp",
+        "directory": "/Users/brandonjf/dev/arduino/PlatformIo/PortIo",
+        "file": "/Users/brandonjf/dev/arduino/PlatformIo/PortIo/.pio/libdeps/native/ArduinoFake/src/ClientFake.cpp"
+    },
+    {
+        "command": "/usr/bin/g++ -o .pio/build/native/lib8bd/ArduinoFake/FunctionFake.o -c -std=c++11 -Wno-c++11-extensions -DPLATFORMIO=60106 -I.pio/libdeps/native/ArduinoFake/src .pio/libdeps/native/ArduinoFake/src/FunctionFake.cpp",
+        "directory": "/Users/brandonjf/dev/arduino/PlatformIo/PortIo",
+        "file": "/Users/brandonjf/dev/arduino/PlatformIo/PortIo/.pio/libdeps/native/ArduinoFake/src/FunctionFake.cpp"
+    },
+    {
+        "command": "/usr/bin/g++ -o .pio/build/native/lib8bd/ArduinoFake/PrintFake.o -c -std=c++11 -Wno-c++11-extensions -DPLATFORMIO=60106 -I.pio/libdeps/native/ArduinoFake/src .pio/libdeps/native/ArduinoFake/src/PrintFake.cpp",
+        "directory": "/Users/brandonjf/dev/arduino/PlatformIo/PortIo",
+        "file": "/Users/brandonjf/dev/arduino/PlatformIo/PortIo/.pio/libdeps/native/ArduinoFake/src/PrintFake.cpp"
+    },
+    {
+        "command": "/usr/bin/g++ -o .pio/build/native/lib8bd/ArduinoFake/SerialFake.o -c -std=c++11 -Wno-c++11-extensions -DPLATFORMIO=60106 -I.pio/libdeps/native/ArduinoFake/src .pio/libdeps/native/ArduinoFake/src/SerialFake.cpp",
+        "directory": "/Users/brandonjf/dev/arduino/PlatformIo/PortIo",
+        "file": "/Users/brandonjf/dev/arduino/PlatformIo/PortIo/.pio/libdeps/native/ArduinoFake/src/SerialFake.cpp"
+    },
+    {
+        "command": "/usr/bin/g++ -o .pio/build/native/lib8bd/ArduinoFake/StreamFake.o -c -std=c++11 -Wno-c++11-extensions -DPLATFORMIO=60106 -I.pio/libdeps/native/ArduinoFake/src .pio/libdeps/native/ArduinoFake/src/StreamFake.cpp",
+        "directory": "/Users/brandonjf/dev/arduino/PlatformIo/PortIo",
+        "file": "/Users/brandonjf/dev/arduino/PlatformIo/PortIo/.pio/libdeps/native/ArduinoFake/src/StreamFake.cpp"
+    },
+    {
+        "command": "/usr/bin/g++ -o .pio/build/native/lib8bd/ArduinoFake/WireFake.o -c -std=c++11 -Wno-c++11-extensions -DPLATFORMIO=60106 -I.pio/libdeps/native/ArduinoFake/src .pio/libdeps/native/ArduinoFake/src/WireFake.cpp",
+        "directory": "/Users/brandonjf/dev/arduino/PlatformIo/PortIo",
+        "file": "/Users/brandonjf/dev/arduino/PlatformIo/PortIo/.pio/libdeps/native/ArduinoFake/src/WireFake.cpp"
+    },
+    {
+        "command": "/usr/bin/g++ -o .pio/build/native/lib8bd/ArduinoFake/arduino/IPAddress.o -c -std=c++11 -Wno-c++11-extensions -DPLATFORMIO=60106 -I.pio/libdeps/native/ArduinoFake/src .pio/libdeps/native/ArduinoFake/src/arduino/IPAddress.cpp",
+        "directory": "/Users/brandonjf/dev/arduino/PlatformIo/PortIo",
+        "file": "/Users/brandonjf/dev/arduino/PlatformIo/PortIo/.pio/libdeps/native/ArduinoFake/src/arduino/IPAddress.cpp"
+    },
+    {
+        "command": "/usr/bin/g++ -o .pio/build/native/lib8bd/ArduinoFake/arduino/WString.o -c -std=c++11 -Wno-c++11-extensions -DPLATFORMIO=60106 -I.pio/libdeps/native/ArduinoFake/src .pio/libdeps/native/ArduinoFake/src/arduino/WString.cpp",
+        "directory": "/Users/brandonjf/dev/arduino/PlatformIo/PortIo",
+        "file": "/Users/brandonjf/dev/arduino/PlatformIo/PortIo/.pio/libdeps/native/ArduinoFake/src/arduino/WString.cpp"
+    },
+    {
+        "command": "/usr/bin/gcc -o .pio/build/native/lib8bd/ArduinoFake/arduino/noniso.o -c -Wno-c++11-extensions -DPLATFORMIO=60106 -I.pio/libdeps/native/ArduinoFake/src .pio/libdeps/native/ArduinoFake/src/arduino/noniso.c",
+        "directory": "/Users/brandonjf/dev/arduino/PlatformIo/PortIo",
+        "file": "/Users/brandonjf/dev/arduino/PlatformIo/PortIo/.pio/libdeps/native/ArduinoFake/src/arduino/noniso.c"
+    },
+    {
+        "command": "/usr/bin/g++ -o .pio/build/native/src/CircularQueue.o -c -std=c++11 -Wno-c++11-extensions -DPLATFORMIO=60106 -Iinclude -Isrc -I.pio/libdeps/native/ArduinoFake/src src/CircularQueue.cpp",
+        "directory": "/Users/brandonjf/dev/arduino/PlatformIo/PortIo",
+        "file": "/Users/brandonjf/dev/arduino/PlatformIo/PortIo/src/CircularQueue.cpp"
+    },
+    {
+        "command": "/usr/bin/g++ -o .pio/build/native/src/Config.o -c -std=c++11 -Wno-c++11-extensions -DPLATFORMIO=60106 -Iinclude -Isrc -I.pio/libdeps/native/ArduinoFake/src src/Config.cpp",
+        "directory": "/Users/brandonjf/dev/arduino/PlatformIo/PortIo",
+        "file": "/Users/brandonjf/dev/arduino/PlatformIo/PortIo/src/Config.cpp"
+    },
+    {
+        "command": "/usr/bin/g++ -o .pio/build/native/src/NetworkManager.o -c -std=c++11 -Wno-c++11-extensions -DPLATFORMIO=60106 -Iinclude -Isrc -I.pio/libdeps/native/ArduinoFake/src src/NetworkManager.cpp",
+        "directory": "/Users/brandonjf/dev/arduino/PlatformIo/PortIo",
+        "file": "/Users/brandonjf/dev/arduino/PlatformIo/PortIo/src/NetworkManager.cpp"
+    },
+    {
+        "command": "/usr/bin/g++ -o .pio/build/native/src/OneButton.o -c -std=c++11 -Wno-c++11-extensions -DPLATFORMIO=60106 -Iinclude -Isrc -I.pio/libdeps/native/ArduinoFake/src src/OneButton.cpp",
+        "directory": "/Users/brandonjf/dev/arduino/PlatformIo/PortIo",
+        "file": "/Users/brandonjf/dev/arduino/PlatformIo/PortIo/src/OneButton.cpp"
+    },
+    {
+        "command": "/usr/bin/g++ -o .pio/build/native/src/PasswordManager.o -c -std=c++11 -Wno-c++11-extensions -DPLATFORMIO=60106 -Iinclude -Isrc -I.pio/libdeps/native/ArduinoFake/src src/PasswordManager.cpp",
+        "directory": "/Users/brandonjf/dev/arduino/PlatformIo/PortIo",
+        "file": "/Users/brandonjf/dev/arduino/PlatformIo/PortIo/src/PasswordManager.cpp"
+    },
+    {
+        "command": "/usr/bin/g++ -o .pio/build/native/src/main.o -c -std=c++11 -Wno-c++11-extensions -DPLATFORMIO=60106 -Iinclude -Isrc -I.pio/libdeps/native/ArduinoFake/src src/main.cpp",
+        "directory": "/Users/brandonjf/dev/arduino/PlatformIo/PortIo",
+        "file": "/Users/brandonjf/dev/arduino/PlatformIo/PortIo/src/main.cpp"
+    }
+]

@@ -26,15 +26,16 @@ public:
   // PasswordManager();
 
   // Parameterized constructor
-  PasswordManager(std::vector<ClickType> pw);
+  explicit PasswordManager(const std::vector<ClickType>& pw);
+
+  
 
   // Getters and setters
-  void setPw(std::vector<ClickType> pw);
   PasswordStatus registerClick(ClickType clickType);
 
 private:
-  std::vector<ClickType> m_pw;
-  CircularQueue<ClickType> m_pwQueue;
+  const std::vector<ClickType>& m_pw;
+  CircularQueue<ClickType> m_pwQueue = CircularQueue<ClickType>(5);
   ClickType m_lastRegisteredClick;
 };
 

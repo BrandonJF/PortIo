@@ -8,8 +8,8 @@
 #include "Config.h"
 
 /** Hardware Related Vars*/
-int sensorPin = 36; // select the input pin for the potentiometer
-int relayPin = 21;
+const int sensorPin = 36; // select the input pin for the potentiometer
+const int relayPin = 21;
 int sensorValue = 0; // variable to store the value coming from the sensor
 int loopsPressed = 0;
 
@@ -26,6 +26,7 @@ String currPassInfo = "Pass";
 String currIndexInfo = "Info";
 String currVerificationInfo = "Verification";
 OneButton button(sensorPin, true);
+boolean relayOn = false;   
 
 void triggerRelay()
 {

@@ -1,12 +1,12 @@
-#include "Arduino.h"
+#ifdef UNIT_TEST
+    #include "ArduinoFake.h"
+#else
+    #include "Arduino.h"
+#endif
+
 #include "PasswordManager.h"
 
-PasswordManager::PasswordManager(std::vector<ClickType> pw) : m_pw(pw), m_pwQueue(5) {}
-
-void PasswordManager::setPw(std::vector<ClickType> pw)
-{
-  m_pw = pw;
-}
+PasswordManager::PasswordManager(const std::vector<ClickType>& pw) : m_pw(pw) {}
 
 std::unordered_map<PasswordStatus, String> passwordStatusToString = {
     {ACCEPTED, "accepted"},
