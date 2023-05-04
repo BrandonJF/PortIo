@@ -1,5 +1,4 @@
-#ifndef PASSWORDMANAGER_H
-#define PASSWORDMANAGER_H
+#pragma once
 
 #include "CircularQueue.h"
 #include <string>
@@ -26,7 +25,7 @@ public:
   // PasswordManager();
 
   // Parameterized constructor
-  explicit PasswordManager(const std::vector<ClickType>& pw);
+  PasswordManager(const std::vector<ClickType>& pw);
 
   
 
@@ -35,8 +34,7 @@ public:
 
 private:
   const std::vector<ClickType>& m_pw;
-  CircularQueue<ClickType> m_pwQueue = CircularQueue<ClickType>(5);
+  const size_t s = 1000;
+  CircularQueue<ClickType> m_pwQueue = CircularQueue<ClickType>(s);
   ClickType m_lastRegisteredClick;
 };
-
-#endif // PASSWORDMANAGER_H
